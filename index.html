@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>Yore Character</title>
+
+    <script src="js/angular.js"></script>
+    <script src="js/yore.js"></script>
+    <script src="js/test.js"></script>
+    <script src="js/app.js"></script>
+</head>
+<body ng-app="yoreApp">
+<div>
+
+</div>
+    <div ng-controller="StatListController">
+        <div>
+            <h4>Abilities</h4>
+            <ul>
+                <li ng-repeat="ability in abilities">{{ability.score.name}} | {{ability.mod.value}} | {{ability.score.value}}</li>
+            </ul>
+        </div>
+        <div>
+            <h4>Skills</h4>
+            <ul>
+                <li ng-repeat="skill in skills">
+                    <input type="checkbox" ng-model="skill.cs.classSkill" ng-change="skill.cs.update( sheet )"/>
+                    <strong>{{skill.total.value}} </strong>
+                    <span>| {{skill.total.name}}</span>
+                    <input type="number" ng-model="skill.ranks.value" min='0' ng-change="skill.ranks.update( sheet )"/>
+                </li>
+            </ul>
+            <span>total ranks : {{totalRanks()}}</span>
+        </div>
+    </div>
+</body>
+</html>
