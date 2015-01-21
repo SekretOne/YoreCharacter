@@ -29,33 +29,27 @@
 
     yore.Sheet.prototype = {
         stat : function( name ){
-            var stat = new Stat();
+            var stat = new Stat(this);
             stat.name = name;
-            stat.id = this.autoNumber++;
-            this.add( stat );
             return stat;
         },
         addend : function( stat ){
-            var addend = new Stat();
-            addend.id = this.autoNumber++;
+            var addend = this.stat();
             addend.is = 'A';
             addend.method = "constant";
             addend.value = 0;
-            this.add( addend );
             this.bind( stat, addend );
             return addend;
         },
         skill : function( name, abilityName ){
-            var skill = new Stat();
-            skill.id = this.autoNumber++;
+            var skill = this.stat();
             skill.is = "skill";
             skill.name = name;
-            var ability = this.get( { name : abilityName + " mod", is : "ability mod" } );
-
-            this.add( skill );
-            this.bind( skill, ability );
-            var ranks = skill.addend( this ).set( this, { name : "ranks", value : 0, is : "ranks" } );
-            var classBonus = skill.addend( this).addChild( this, ranks ).set( this, { name : "class skill bonus", method : "class skill", classSkill : false, is : "cs" } );
+            var abilityMod = this.get( { name : abilityName + " mod", is : "ability mod" } );
+            skill.addChild( abilityMod );
+            var ranks = skill.addend().set( { name : "ranks", value : 0, is : "ranks" } );
+            var classBonus = skill.addend().addChild( ranks ).set( { name : "class skill bonus", method : "class skill", classSkill : false, is : "cs" } );
+            return skill;
         },
         get : function( test ){
             for( var i = 0; i < this.bindables.length; i++ ){
@@ -119,29 +113,29 @@
         }
     };
 
-    function Stat( ){
+    function Stat( sheet ){
         this.is = 'S';
-        this.id = null;
+        this.id = sheet.autoNumber++;
         this.name = "untitled";
         this.value = 0;
         this.type = "untyped";
         this.method = "sum";
+        this.sheet = sheet.id;
+        sheet.add( this );
     }
 
     Stat.prototype.update = function(){
-        var sheet = getSheet( this.sheet );
-        this.recalculate( sheet ); //recalculate
-        var parents = sheet.getParents( this );
+        this.recalculate(); //recalculate
+        var parents = this.getParents();
         for( var i = 0; i < parents.length; i++ ){
-            parents[i].update( sheet );
+            parents[i].update();
         }
         return this;
     };
 
     Stat.prototype.recalculate = function(){
-        var sheet = getSheet( this.sheet );
         var method = valueMethodsMap[ this.method ];
-        this.value = method.val( sheet, this );
+        this.value = method.val( this );
     };
 
     Stat.prototype.set = function( opts ){
@@ -162,53 +156,45 @@
     };
 
     Stat.prototype.addChild = function( stat ){
+        var sheet = getSheet( this.sheet );
         sheet.bind( this, stat );
-        this.update( sheet );
+        this.update();
         return this;
     };
 
-    Stat.prototype.addend = function( sheet ){
+    Stat.prototype.addend = function( ){
+        var sheet = getSheet( this.sheet );
         return sheet.addend( this );
     };
 
-    Stat.prototype.getChildren = function( sheet, test ){
-        var id = this.id;
-        var children = [];
-        for( var i = 0; i < sheet.bindings.length; i++ ){
-            var binding = sheet.bindings[i];
-            if( binding[0] === id ){
-                var childId = binding[1];
-                var child = sheet.get( {id : childId} );
-                if( test === undefined ){
-                    children.push( child );
-                }
-                else{
-                    if( matchesByObject( child, test ) ){
-                        children.push( child );
-                    }
-                }
-            }
-        }
-        return children;
+    Stat.prototype.getChildren = function( test ){
+        var sheet = getSheet( this.sheet );
+        var children = sheet.getChildren( this );
+        return test === undefined ? children : filterArray( children, test );
+    };
+
+    Stat.prototype.getParents = function(){
+        var sheet = getSheet( this.sheet );
+        return sheet.getParents( this );
     };
 
     var valueMethods = [
         {
             name : "constant",
-            val : function( sheet, stat ){
+            val : function( stat ){
                 return stat.value;
             }
         },
         {
             name : "override",
-            val : function( sheet, stat ){
+            val : function( stat ){
                 return stat.value;
             }
         },
         {
             name : "sum",
-            val : function( sheet, stat ){
-                var children = sheet.getChildren( stat );
+            val : function( stat ){
+                var children = stat.getChildren();
                 var value = 0;
                 //don't use groups yet
                 for( var i = 0; i < children.length; i++ ){
@@ -219,30 +205,30 @@
         },
         {
             name : "equation",
-            val : function( sheet, stat ){
-                var children = sheet.getChildren( stat );
+            val : function( stat ){
+                var children = stat.getChildren();
                 return children.length > 0 ? children[0].value : 0;
             }
         },
         {
             name : "stat",
-            val : function( sheet, stat ){
-                var children = sheet.getChildren( stat );
+            val : function( stat ){
+                var children = stat.getChildren(  );
                 return children.length > 0 ? children[0].value : 0;
             }
         },
         {
             name : "ability mod",
-            val : function( sheet, stat ){
-                var children = sheet.getChildren( stat );
+            val : function( stat ){
+                var children = stat.getChildren();
                 var total = children.length > 0 ? children[0].value : 0;
                 return Math.floor( (total / 2) - 5 );
             }
         },
         {
             name : "class skill",
-            val : function( sheet, stat ){
-                var children = sheet.getChildren( stat );
+            val : function(  stat ){
+                var children = stat.getChildren();
                 if ( children.length === 0 ) return 0;
                 var ranks = children[0];
                 return ( ranks.value > 0 && stat.classSkill ? 3 : 0 );
@@ -268,10 +254,11 @@
      * @param test
      * @returns {Array}
      */
-    var screen = yore.screen = function( array, test ){
+    var filterArray = yore.screen = function( array, test ){
         var result = [];
         for( var i = 0; i < array.length; i++ ){
-            if( matchesByObject( array[0], test ) ){ result.push( array[0] ); }
+            var element = array[i];
+            if( matchesByObject( element, test ) ){ result.push( element ); }
         }
         return result;
     };

@@ -12,7 +12,7 @@
         var abilityMods = sheet.getAll( { is : "ability mod" } );
         for( var i = 0; i < abilityMods.length; i++ ){
             $scope.abilities.push( {
-                score : abilityMods[i].getChildren( sheet, { is : "ability" } )[0],
+                score : abilityMods[i].getChildren( { is : "ability" } )[0],
                 mod : abilityMods[i]
             });
         }
@@ -24,9 +24,9 @@
             var skill = skills[i];
             $scope.skills.push( {
                 total : skill,
-                cs : skill.getChildren( sheet, { is : "cs" })[0],
-                ranks : skill.getChildren( sheet, { is : "ranks" })[0]
-            })
+                cs : skill.getChildren( { is : "cs" })[0],
+                ranks : skill.getChildren( { is : "ranks" })[0]
+            });
         }
 
         $scope.totalRanks = function(){

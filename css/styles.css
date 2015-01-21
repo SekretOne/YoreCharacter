@@ -1,0 +1,26 @@
+.slot-small {
+    display : inline-block;
+    width : 2em;
+    border : solid 1px lightslategray;
+    text-align : center;
+    margin-bottom: 2px;
+    height:  1.3em;
+}
+
+.slot-text {
+    display : inline-block;
+    width : 14em;
+    border : solid 1px lightslategray;
+    padding-left: .2em;
+    margin-bottom: 2px;
+    height:  1.3em;
+}
+
+.slot-small-text {
+    display : inline-block;
+    width : 3em;
+    border : solid 1px lightslategray;
+    padding-left: .2em;
+    margin-bottom: 2px;
+    height:  1.3em;
+}
