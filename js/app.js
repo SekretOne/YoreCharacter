@@ -5,6 +5,9 @@
 (function(){
     var app = angular.module( "yoreApp", [] );
 
+    /**
+     * Will probably be turned into the main sheet
+     */
     app.controller( "StatListController", function( $scope ){
         $scope.sheet = window.sheet;
 
@@ -29,6 +32,16 @@
             });
         }
 
+        $scope.bab = sheet.get( {name : "base attack bonus", is : "offense"} );
+        $scope.cmb = sheet.get( {name : "combat maneuver bonus", is : "offense"} );
+
+        $scope.ac = sheet.get( {name : "armor class", is : "defense"} );
+        $scope.cmd = sheet.get( {name : "combat maneuver defense", is : "defense"} );
+
+        $scope.fort = sheet.get( {name : "fortitude", is : "save"} );
+        $scope.ref = sheet.get( {name : "reflex", is : "save"} );
+        $scope.will = sheet.get( {name : "will", is : "save"} );
+
         $scope.totalRanks = function(){
             var total = 0;
             for( var i = 0; i < $scope.skills.length; i++ ){
@@ -38,25 +51,9 @@
         };
     });
 
-    app.filter( "stats", function(){
-        return function( bindables ){
-            var array = [];
-            for( var i = 0; i < bindables.length; i++ ){
-                var b = bindables[i];
-                if(b.is !== 'A' ){ array.push( b ); }
-            }
-            return array;
+    app.filter( "modifier", function(){
+        return function( value ){
+            return value >= 0 ? "+"+ value : value;
         }
-    } );
-
-    app.filter( "skills", function(){
-        return function( bindables ){
-            var array = [];
-            for( var i = 0; i < bindables.length; i++ ){
-                var b = bindables[i];
-                if(b.is === 'skill' ){ array.push( b ); }
-            }
-            return array;
-        }
-    } );
+    });
 })();

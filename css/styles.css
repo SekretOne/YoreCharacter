@@ -24,3 +24,8 @@
     margin-bottom: 2px;
     height:  1.3em;
 }
+
+.notModified {
+    color : gray;
+    font-weight: normal;
+}

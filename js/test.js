@@ -4,7 +4,7 @@
     var str = sheet.stat( "str").set( { is : "ability" } );
     var dex = sheet.stat( "dex").set( { is : "ability" } );
     var con = sheet.stat( "con").set( { is : "ability" } );
-    var int = sheet.stat( "int").set(  { is : "ability" } );
+    var int = sheet.stat( "int").set(  { is : "ability"} );
     var wis = sheet.stat( "wis").set(  { is : "ability" } );
     var cha = sheet.stat( "cha").set(  { is : "ability" } );
     var strMod = sheet.stat( "str mod").set(  { is : "ability mod", method : "ability mod" } ).addChild(  str );
@@ -21,7 +21,7 @@
     wis.addend( sheet ).set(  { value : 9 } );
     cha.addend( sheet ).set(  { value : 8 } );
 
-    var bab = sheet.stat( "base attack bonus").set(  {is : "offense", method : "constant", value : 3 } );
+    var bab = sheet.stat( "base attack bonus").set(  {is : "offense", method : "constant", value : 3} );
 
     var cmb = sheet.stat( "combat maneuver bonus").set(  { is : "offense"});
     cmb.addChild(  bab ).addChild(  strMod );
@@ -35,11 +35,11 @@
     cmd.addChild(  dexMod).addChild(  strMod).addChild(  bab );
 
     //saves
-    var ref = sheet.stat( "reflex").addend(  { name : "base" } );
+    var ref = sheet.stat( "reflex").set( { is : "save"}).addend(  { name : "base" } );
     ref.addChild(  dexMod );
-    var fort = sheet.stat( "fortitude").addend(  {name : "base"} );
+    var fort = sheet.stat( "fortitude").set( { is : "save"}).addend(  {name : "base"} );
     fort.addChild(  conMod );
-    var will = sheet.stat( "will").addend(  {name : "base "});
+    var will = sheet.stat( "will").set( { is : "save"}).addend(  {name : "base "});
     will.addChild(  wisMod );
 
     skillBlock(  [

@@ -24,6 +24,7 @@
             }
             return parseInt( lastName ) +1;
         }();
+        this.items = [];
         sheets[ this.id ] = this;
     };
 
@@ -42,13 +43,12 @@
             return addend;
         },
         skill : function( name, abilityName ){
-            var skill = this.stat();
-            skill.is = "skill";
-            skill.name = name;
+            var skill = this.stat().set( {is : "skill", name : name } );
             var abilityMod = this.get( { name : abilityName + " mod", is : "ability mod" } );
             skill.addChild( abilityMod );
             var ranks = skill.addend().set( { name : "ranks", value : 0, is : "ranks" } );
             var classBonus = skill.addend().addChild( ranks ).set( { name : "class skill bonus", method : "class skill", classSkill : false, is : "cs" } );
+            skill.set( { method : "skill sum"} );
             return skill;
         },
         get : function( test ){
@@ -204,6 +204,20 @@
             }
         },
         {
+            name : "skill sum",
+            val : function( stat ){
+                var children = stat.getChildren();
+                var value = 0;
+                //don't use groups yet
+                for( var i = 0; i < children.length; i++ ){
+                    value += children[i].value;
+                }
+                var ranks =
+                stat.modified = ( children.length > 3 || filterArray( children, { is : 'ranks' })[0].value > 0 );
+                return value;
+            }
+        },
+        {
             name : "equation",
             val : function( stat ){
                 var children = stat.getChildren();
@@ -237,6 +251,19 @@
     ];
 
     var valueMethodsMap = Map( valueMethods, "name" );
+
+    //***************************************************************************//
+    // Items
+    sheet.prototype.makeItem = function(){
+        return {
+            name : "",
+            quantity : 1,
+            weight : 0,
+            description : ""
+        }
+    };
+
+
 
     //***************************************************************************//
     function matchesByObject( element, obj ){
