@@ -254,7 +254,7 @@
 
     //***************************************************************************//
     // Items
-    sheet.prototype.makeItem = function(){
+    yore.Sheet.prototype.makeItem = function(){
         return {
             name : "",
             quantity : 1,

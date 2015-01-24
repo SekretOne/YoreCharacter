@@ -3,7 +3,21 @@
  */
 
 (function(){
-    var app = angular.module( "yoreApp", [] );
+    var app = angular.module( "yoreApp", [ 'ngRoute'] );
+
+    app.config(  function($routeProvider){
+        $routeProvider.when("/",
+            {
+                templateUrl: "pages/front.html",
+                controller: "StatListController"
+            }
+        );
+    });
+
+    app.controller( "MainCtrl", function( $scope ){
+        $scope.test = "Hey it works!";
+    });
+
 
     /**
      * Will probably be turned into the main sheet
@@ -34,10 +48,8 @@
 
         $scope.bab = sheet.get( {name : "base attack bonus", is : "offense"} );
         $scope.cmb = sheet.get( {name : "combat maneuver bonus", is : "offense"} );
-
         $scope.ac = sheet.get( {name : "armor class", is : "defense"} );
         $scope.cmd = sheet.get( {name : "combat maneuver defense", is : "defense"} );
-
         $scope.fort = sheet.get( {name : "fortitude", is : "save"} );
         $scope.ref = sheet.get( {name : "reflex", is : "save"} );
         $scope.will = sheet.get( {name : "will", is : "save"} );

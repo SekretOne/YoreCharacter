@@ -5,6 +5,7 @@
     <title>Yore Character</title>
 
     <script src="js/angular.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.0rc1/angular-route.min.js"></script>
     <script src="js/yore.js"></script>
     <script src="js/test.js"></script>
     <script src="js/app.js"></script>
@@ -12,56 +13,6 @@
     <link rel="stylesheet" type="text/css" href="css/styles.css"/>
 </head>
 <body ng-app="yoreApp">
-<div>
-
-</div>
-    <div ng-controller="StatListController">
-        <div>
-            <h4>Abilities</h4>
-            <ul>
-                <li ng-repeat="ability in abilities">
-                    <span class="slot-small-text">{{ability.score.name}}</span>
-                    <span class="slot-small">{{ability.mod.value | modifier}}</span>
-                    <span class="slot-small">{{ability.score.value}}</span>
-                </li>
-            </ul>
-        </div>
-        <div>
-            <strong>BAB</strong>
-            <span>{{bab.value | modifier}}</span>
-        </div>
-        <div>
-            <strong>CMB</strong>
-            <span>{{cmb.value | modifier}}</span>
-        </div>
-        <div>
-            <strong>AC</strong>
-            <span>{{ac.value}}</span>
-        </div>
-        <div>
-            <strong>CMD</strong>
-            <span>{{cmd.value}}</span>
-        </div>
-        <div>
-            <h4>Saves</h4>
-            <ul>
-                <li>Fort: {{fort.value | modifier}}</li>
-                <li>Ref: {{ref.value | modifier}}</li>
-                <li>Will: {{will.value | modifier}}</li>
-            </ul>
-        </div>
-        <div>
-            <h4>Skills</h4>
-            <ul>
-                <li ng-repeat="skill in skills">
-                    <input type="checkbox" ng-model="skill.cs.classSkill" ng-change="skill.cs.update( sheet )"/>
-                    <strong class="slot-small" ng-class="{notModified : !skill.total.modified}">{{skill.total.value | modifier}} </strong>
-                    <span class="slot-text">{{skill.total.name}}</span>
-                    <input type="number" ng-model="skill.ranks.value" min='0' ng-change="skill.ranks.update( sheet )"/>
-                </li>
-            </ul>
-            <span>total ranks : {{totalRanks()}}</span>
-        </div>
-    </div>
+    <div ng-view></div>
 </body>
 </html>
