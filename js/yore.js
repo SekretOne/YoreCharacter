@@ -5,16 +5,29 @@
 (function(){
     var yore = {};
 
-    var sheets = {};
+    var sheets = yore._sheets = {};  //map of sheets that have been created
 
     function getSheet( id ){
         return sheets[ id ];
     }
 
+    yore.getSheet = function( id ){
+        for( var prop in sheets ){ console.log( prop ) }
+        return getSheet(id );
+    };
+
     yore.Sheet = function Sheet(){
-        this.name = "";
+        this.bio = {  //stores all the personal information
+            name : "unnamed",
+            race : "",
+            class : "",
+            age : "",
+            height : "",
+            weight : "",
+            description : ""
+        };
         this.autoNumber = 0;
-        this.bindables = [];
+        this.bindables = {};
         this.bindings = [];
         this.stackableTypes = ["untyped", "dodge", "penalty"];  //what types are allowed to stack
         this.id = function(){
@@ -52,7 +65,7 @@
             return skill;
         },
         get : function( test ){
-            for( var i = 0; i < this.bindables.length; i++ ){
+            for( var i in this.bindables ){
                 var bindable = this.bindables[i];
                 if( matchesByObject( bindable, test ) ){ return bindable; }
             }
@@ -60,11 +73,14 @@
         },
         getAll : function( test ){
             var found = [];
-            for( var i = 0; i < this.bindables.length; i++ ){
+            for( var i in this.bindables ){
                 var bindable = this.bindables[i];
                 if( matchesByObject( bindable, test ) ){ found.push( bindable ); }
             }
             return found;
+        },
+        getById : function( id ){
+            return this.bindables[id];
         },
         getChildren : function( bindable ){
             var id = bindable.id;
@@ -73,7 +89,7 @@
                 var binding = this.bindings[i];
                 if( binding[0] === id ){
                     var childId = binding[1];
-                    children.push( this.get( { id : childId } ) );
+                    children.push( this.getById( childId ) );
                 }
             }
             return children;
@@ -86,13 +102,13 @@
                 var binding = this.bindings[i];
                 if( binding[1] === id ){
                     var parentId = binding[0];
-                    parents.push( this.get( { id : parentId} ) );
+                    parents.push( this.getById( parentId ) );
                 }
             }
             return parents;
         },
         add : function ( bindable ){
-            this.bindables.push ( bindable );
+            this.bindables[bindable.id] =  bindable ;
         },
         remove : function( bindable ){
             var parents = this.getParents( bindable );
@@ -102,10 +118,11 @@
                 var binding = this.bindings[i];
                 if( binding[0] == thisId || binding[1] === thisId ){
                     this.bindings.splice( i, 1 );
+                    i--;
                 }
             }
             for( var j = 0; j < parents.length; j++ )
-            this.bindables.splice( this.bindables.indexOf( bindable ), 1 );
+            this.bindables.delete( bindable.id );
         },
         bind : function ( parent, child ){
             this.bindings.push( [ parent.id, child.id ] );
@@ -171,6 +188,10 @@
         var sheet = getSheet( this.sheet );
         var children = sheet.getChildren( this );
         return test === undefined ? children : filterArray( children, test );
+    };
+
+    Stat.prototype.getChild = function( test ){
+        return this.getChildren( test )[0];
     };
 
     Stat.prototype.getParents = function(){

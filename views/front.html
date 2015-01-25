@@ -2,7 +2,7 @@
     <div>
         <h4>Abilities</h4>
         <ul>
-            <li ng-repeat="ability in abilities">
+            <li ng-repeat="ability in front.abilities">
                 <span class="slot-small-text">{{ability.score.name}}</span>
                 <span class="slot-small">{{ability.mod.value | modifier}}</span>
                 <span class="slot-small">{{ability.score.value}}</span>
@@ -11,38 +11,38 @@
     </div>
     <div>
         <strong>BAB</strong>
-        <span>{{bab.value | modifier}}</span>
+        <span>{{front.bab.value | modifier}}</span>
     </div>
     <div>
         <strong>CMB</strong>
-        <span>{{cmb.value | modifier}}</span>
+        <span>{{front.cmb.value | modifier}}</span>
     </div>
     <div>
         <strong>AC</strong>
-        <span>{{ac.value}}</span>
+        <span>{{front.ac.value}}</span>
     </div>
     <div>
         <strong>CMD</strong>
-        <span>{{cmd.value}}</span>
+        <span>{{front.cmd.value}}</span>
     </div>
     <div>
         <h4>Saves</h4>
         <ul>
-            <li>Fort: {{fort.value | modifier}}</li>
-            <li>Ref: {{ref.value | modifier}}</li>
-            <li>Will: {{will.value | modifier}}</li>
+            <li>Fort: {{front.fort.value | modifier}}</li>
+            <li>Ref: {{front.ref.value | modifier}}</li>
+            <li>Will: {{front.will.value | modifier}}</li>
         </ul>
     </div>
     <div>
         <h4>Skills</h4>
         <ul>
-            <li ng-repeat="skill in skills">
-                <input type="checkbox" ng-model="skill.cs.classSkill" ng-change="skill.cs.update( sheet )"/>
+            <li ng-repeat="skill in front.skills">
+                <input type="checkbox" ng-model="skill.cs.classSkill" ng-change="skill.cs.update( front.sheet )"/>
                 <strong class="slot-small" ng-class="{notModified : !skill.total.modified}">{{skill.total.value | modifier}} </strong>
                 <span class="slot-text">{{skill.total.name}}</span>
-                <input type="number" ng-model="skill.ranks.value" min='0' ng-change="skill.ranks.update( sheet )"/>
+                <input type="number" ng-model="skill.ranks.value" min='0' ng-change="skill.ranks.update( front.sheet )"/>
             </li>
         </ul>
-        <span>total ranks : {{totalRanks()}}</span>
+        <span>total ranks : {{front.totalRanks()}}</span>
     </div>
 </div>
