@@ -5,30 +5,53 @@
 (function(){
     var app = angular.module( "yoreApp", [ 'ngRoute'] );
 
+    app.run(function($rootScope, $templateCache) {
+        $rootScope.$on('$viewContentLoaded', function() {
+            $templateCache.removeAll();
+        });
+    });
+
     app.config(  ['$routeProvider', '$locationProvider', function($routeProvider, $locationProvider){
-        $routeProvider.when( "/gallery",
+        $routeProvider.when( "/",
             {
                 templateUrl: "views/gallery.html",
                 controller: "CharacterGalleryCtrl",
                 controllerAs: "gallery"
             }
-        )
-        .when(  "/char/:charId",
+        ).when( "/char/:charId/overview",
             {
-                templateUrl: "views/front.html",
+                templateUrl: "views/overview.html",
+                controller: "OverviewController",
+                controllerAs: "overview"
+            }
+        ).when(  "/char/:charId/front",
+            {
+                templateUrl: "views/stats.html",
                 controller: "StatListController",
                 controllerAs: "front"
             }
-        ).when(  "/inventory",
+        ).when(  "/char/:charId/inventory",
             {
-                templateUrl :"inventory.html",
-                controller: "InventoryController"
+                templateUrl: "views/inventory.html",
+                controller: "InventoryController",
+                controllerAs: "inventory"
             }
-        );
+        ).otherwise({ redirectTo: '/' });  //not even sure this is necessary
 
         $locationProvider.html5Mode(true);
         $locationProvider.baseHref = "/YoreChar3/"
     }]);
+
+    /**
+     * Clears the template cache on redirect so weird behavior doesn't occur during development.
+     */
+    app.run(function($rootScope, $templateCache) {
+        $rootScope.$on('$routeChangeStart', function(event, next, current) {
+            if (typeof(current) !== 'undefined'){
+                $templateCache.remove(current.templateUrl);
+            }
+        });
+    });
 
     app.controller( "MainCtrl", ['$route', '$routeParams', '$location',
         function($route, $routeParams, $location){
@@ -38,10 +61,6 @@
             this.$routeParams = $routeParams;
     }]);
 
-    app.controller( "InventoryController", function(){
-
-    });
-
     /**
      * Select characters
      */
@@ -49,14 +68,40 @@
         this.characters = yore._sheets;
     }]);
 
+    /**
+     * Character's biography
+     */
+    app.controller( "OverviewController", ['$routeParams', function($routeParams){
+        this.charId = $routeParams.charId;
+        this.bio =  yore.getSheet( this.charId ).bio;
+    }]);
 
+    /**
+     * Inventory
+     */
+    app.controller( "InventoryController", ['$scope', '$routeParams', function($scope, $routeParams) {
+        this.charId = $routeParams.charId;
+        var sheet =  yore.getSheet( this.charId );
+        this.items = sheet.items;
+
+        this.edit = {};
+        this.edit.item = sheet.makeItem();
+        this.addItem = function( ){
+            console.log( "pusing new item", this.edit.item );
+            this.items.push( this.edit.item );
+            this.edit.item = sheet.makeItem();
+        };
+
+        this.details = function( comparison ){
+            console.log( "on blur", this.edit.item, comparison );
+        }
+    }]);
     /**
      * Will probably be turned into the main sheet
      */
     app.controller( "StatListController", ['$routeParams', function($routeParams) {
-        console.log("anything?");
-        console.log( $routeParams.charId );
-        var sheet =  yore.getSheet( $routeParams.charId );
+        this.charId = $routeParams.charId;
+        var sheet =  yore.getSheet( this.charId );
 
         this.abilities = [];
         var abilityMods = sheet.getAll( { is : "ability mod" } );

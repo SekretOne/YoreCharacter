@@ -6,6 +6,7 @@
 
     <script src="js/angular.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.0rc1/angular-route.min.js"></script>
+    <!--<script src="js/angular-ui-router.js"></script>-->
     <script src="js/yore.js"></script>
     <script src="js/test.js"></script>
     <script src="js/app.js"></script>
@@ -13,10 +14,6 @@
     <link rel="stylesheet" type="text/css" href="css/styles.css"/>
 </head>
 <body ng-app="yoreApp" ng-controller="MainCtrl as main">
-    <a href="gallery">Gallery</a>
-    <a href="inventory">Inventory</a>
-    <a href="/char/0">test character</a>
-    <!--<a href="#/char/{{sheet.id}}/front">Stats</a>-->
     <div ng-view></div>
     <pre>$location.path() = {{main.$location.path()}}</pre>
     <pre>$route.current.templateUrl = {{main.$route.current.templateUrl}}</pre>

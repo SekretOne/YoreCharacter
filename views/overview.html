@@ -1,0 +1,18 @@
+<div>
+    <div>
+        <a href="gallery">Gallery</a>
+        <a href="char/{{overview.charId}}/overview">Overview</a>
+        <a href="char/{{overview.charId}}/front">Front</a>
+        <a href="char/{{overview.charId}}/inventory">Inventory</a>
+    </div>
+    <h1>Bio</h1>
+    <div class="center-column">
+        <input ng-model="overview.bio.name" placeholder="name"/>
+        <input ng-model="overview.bio.race" placeholder="race"/>
+        <input ng-model="overview.bio.class" placeholder="class"/>
+        <input ng-model="overview.bio.age" placeholder="age"/>
+        <input ng-model="overview.bio.height" placeholder="height"/>
+        <input ng-model="overview.bio.weight" placeholder="weight"/>
+        <textarea ng-model="overview.bio.description" placeholder="description"></textarea>
+    </div>
+</div>

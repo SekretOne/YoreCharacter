@@ -29,3 +29,13 @@
     color : gray;
     font-weight: normal;
 }
+
+.center-column {
+    display: inline-block;
+}
+
+.center-column *{
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}

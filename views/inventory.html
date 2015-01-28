@@ -1,0 +1,21 @@
+<div>
+    <a href="gallery">Gallery</a>
+    <a href="char/{{inventory.charId}}/overview">Overview</a>
+    <a href="char/{{inventory.charId}}/front">Front</a>
+    <a href="char/{{inventory.charId}}/inventory">Inventory</a>
+    <h2>Inventory</h2>
+    <div ng-repeat="item in inventory.items">
+        <input ng-model="item.name"/>
+        <input ng-model="item.quantity"/>
+        <input ng-model="item.weight"/>
+        <textarea ng-model="item.description"></textarea>
+    </div>
+    <hr>
+    <form ng-submit="inventory.addItem()">
+        <input ng-model="inventory.edit.item.name" ng-blur="inventory.details( inventory.edit.item )" placeholder="name"/>
+        <input ng-model="inventory.edit.item.quantity" ng-blur="inventory.details( inventory.edit.item )" placeholder="quantity"/>
+        <input ng-model="inventory.edit.item.weight" ng-blur="inventory.details( inventory.edit.item )" placeholder="weight"/>
+        <input ng-model="inventory.edit.item.description" placeholder="description"/>
+        <button type="submit">+</button>
+    </form>
+</div>
