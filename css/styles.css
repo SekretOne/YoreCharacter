@@ -39,3 +39,26 @@
     margin-left: auto;
     margin-right: auto;
 }
+
+.item textarea{
+    margin: 5px;
+    display: block;
+    width: 314px;
+    height: 80px;
+}
+
+.item-name{
+    margin: 5px;
+    width: 200px;
+}
+
+.item-quantity{
+    margin: 5px;
+    width: 40px;
+    text-align: center;
+}
+.item-weight{
+    margin: 5px;
+    width: 40px;
+    text-align: center;
+}
