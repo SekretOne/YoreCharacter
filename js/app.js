@@ -11,6 +11,8 @@
         });
     });
 
+    loadFromStorage();
+
     app.config(  ['$routeProvider', '$locationProvider', function($routeProvider, $locationProvider){
         $routeProvider.when( "/",
             {
@@ -45,13 +47,13 @@
     /**
      * Clears the template cache on redirect so weird behavior doesn't occur during development.
      */
-    app.run(function($rootScope, $templateCache) {
+    /*app.run(function($rootScope, $templateCache) {
         $rootScope.$on('$routeChangeStart', function(event, next, current) {
             if (typeof(current) !== 'undefined'){
                 $templateCache.remove(current.templateUrl);
             }
         });
-    });
+    });*/
 
     app.controller( "MainCtrl", ['$route', '$routeParams', '$location',
         function($route, $routeParams, $location){
@@ -65,21 +67,32 @@
      * Select characters
      */
     app.controller( "CharacterGalleryCtrl", ['$route', '$routeParams', '$location', function($route, $routeParams, $location) {
-        this.characters = yore._sheets;
+        save();
+        this.characters = yore.getSheets();
+        this.makeCharacter = yore.makeCharacter;
     }]);
 
     /**
      * Character's biography
      */
     app.controller( "OverviewController", ['$routeParams', function($routeParams){
+        save();
         this.charId = $routeParams.charId;
-        this.bio =  yore.getSheet( this.charId ).bio;
+        var sheet = yore.getSheet( this.charId );
+        this.xp = sheet.experience;
+        this.bio =  sheet.bio;
+
+        this.add = function(){
+            this.xp.current += this.addXp;
+            this.addXp = '';
+        }
     }]);
 
     /**
      * Inventory
      */
     app.controller( "InventoryController", ['$scope', '$routeParams', function($scope, $routeParams) {
+        save();
         this.charId = $routeParams.charId;
         var sheet =  yore.getSheet( this.charId );
         this.items = sheet.items;
@@ -87,21 +100,31 @@
         this.edit = {};
         this.edit.item = sheet.makeItem();
         this.addItem = function( ){
-            console.log( "pusing new item", this.edit.item );
+            console.log( "pushing new item", this.edit.item );
             this.items.push( this.edit.item );
             this.edit.item = sheet.makeItem();
         };
 
         this.details = function( comparison ){
             console.log( "on blur", this.edit.item, comparison );
+        };
+
+        this.totalWeight = function( items ){
+            console.log( "doing weight" );
+             for( var total= 0, i = 0; i < items.length; i++ ) {
+                 total += items[i].quantity * items[i].weight;
+             }
+            return total;
         }
     }]);
     /**
      * Will probably be turned into the main sheet
      */
     app.controller( "StatListController", ['$routeParams', function($routeParams) {
+        save();
         this.charId = $routeParams.charId;
         var sheet =  yore.getSheet( this.charId );
+        console.log( sheet );
 
         this.abilities = [];
         var abilityMods = sheet.getAll( { is : "ability mod" } );
@@ -158,5 +181,27 @@
                 element[ name[j] ] = parent.getChildren( stats[j] )[0];
             }
         }
+    }
+
+    function loadFromStorage(  ){
+        //load from local storage
+        var data = localStorage.getItem( "sheets" );
+        console.log( data );
+        if( data !== null ){
+            console.log("should load");
+            data = angular.fromJson( data );
+            var sheetMap = {};
+            for( var sheetId in data ){
+                sheetMap[ sheetId ] = new yore.Sheet( data[sheetId] );
+            }
+            yore.setSheets( sheetMap );
+        }
+    }
+
+    function save(  ){
+        //console.log("saving");
+        var json = angular.toJson( yore.getSheets(), true );
+        console.log( json );
+        localStorage.setItem( "sheets",  json );
     }
 })();

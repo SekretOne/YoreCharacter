@@ -6,6 +6,12 @@
         <a href="char/{{overview.charId}}/inventory">Inventory</a>
     </div>
     <h1>Bio</h1>
+    <div>
+        <input type="number" ng-model="overview.xp.current"/>
+        <input type="number" ng-model="overview.addXp"/><button ng-click="overview.add()">+</button>
+        <input type="number" ng-model="overview.xp.next"/>
+        <input type="number" ng-model="overview.xp.level"/>
+    </div>
     <div class="center-column">
         <input ng-model="overview.bio.name" placeholder="name"/>
         <input ng-model="overview.bio.race" placeholder="race"/>

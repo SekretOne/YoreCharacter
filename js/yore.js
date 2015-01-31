@@ -7,16 +7,32 @@
 
     var sheets = yore._sheets = {};  //map of sheets that have been created
 
-    function getSheet( id ){
-        return sheets[ id ];
-    }
-
-    yore.getSheet = function( id ){
-        for( var prop in sheets ){ console.log( prop ) }
-        return getSheet(id );
+    yore.makeSheet = function(){
+        var sheet = new yore.Sheet();
+        sheet.id = function(){
+            var lastName = "-1";
+            for( var sheetName in sheets ){
+                if( sheets.hasOwnProperty( sheetName )){ lastName = sheetName; }
+            }
+            return parseInt( lastName ) +1;
+        }();
+        sheets[ sheet.id ] = sheet;
+        return sheet;
     };
 
-    yore.Sheet = function Sheet(){
+    yore.getSheets = function getSheets(){
+        return sheets;
+    };
+
+    yore.setSheets = function setSheets( newSheets ){
+        sheets = newSheets;
+    };
+
+    var getSheet = yore.getSheet = function getSheet( id ){
+        return sheets[id ];
+    };
+
+    yore.Sheet = function Sheet( data ){
         this.bio = {  //stores all the personal information
             name : "unnamed",
             race : "",
@@ -24,21 +40,32 @@
             age : "",
             height : "",
             weight : "",
-            description : ""
+            description : "",
+            id : "-1"
+        };
+        this.experience = {
+            level : 1,
+            next : 2000,
+            current : 0
         };
         this.autoNumber = 0;
         this.bindables = {};
         this.bindings = [];
         this.stackableTypes = ["untyped", "dodge", "penalty"];  //what types are allowed to stack
-        this.id = function(){
-            var lastName = "-1";
-            for( var sheetName in sheets ){
-                if( sheets.hasOwnProperty( sheetName )){ lastName = sheetName; }
-            }
-            return parseInt( lastName ) +1;
-        }();
         this.items = [];
-        sheets[ this.id ] = this;
+
+        //-------------------------------//
+        for( var prop in data ){
+            if( prop === 'bindables' ){
+                var bindableData = data[prop];
+                for( var bindableId in bindableData ){
+                     new Stat( this, bindableData[bindableId] );
+                }
+            }
+            else{
+                this[prop] = data[prop];
+            }
+        }
     };
 
     yore.Sheet.prototype = {
@@ -130,7 +157,13 @@
         }
     };
 
-    function Stat( sheet ){
+    /**
+     *
+     * @param sheet
+     * @param data
+     * @constructor
+     */
+    function Stat( sheet, data ){
         this.is = 'S';
         this.id = sheet.autoNumber++;
         this.name = "untitled";
@@ -138,6 +171,10 @@
         this.type = "untyped";
         this.method = "sum";
         this.sheet = sheet.id;
+
+        for( var prop in data ){
+            this[prop] = data[prop];
+        }
         sheet.add( this );
     }
 

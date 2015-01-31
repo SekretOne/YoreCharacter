@@ -4,15 +4,29 @@
     <a href="char/{{inventory.charId}}/front">Front</a>
     <a href="char/{{inventory.charId}}/inventory">Inventory</a>
     <h2>Inventory</h2>
-    <div ng-repeat="item in inventory.items" class="item">
-        <input ng-model="item.name" class="item-name"/>
-        <input ng-model="item.quantity" class="item-quantity"/>
-        <input ng-model="item.weight" class="item-weight"/>
-        <textarea ng-model="item.description"></textarea>
+    <div>
+        <strong class="item-weight">=</strong>
+        <strong class="item-name">name</strong>
+        <strong class="item-quantity">qty</strong>
+        <strong class="item-weight">wt</strong>
     </div>
+    <div ng-repeat="item in inventory.items">
+        <div class="item">
+            <span class="item-weight">{{item.quantity * item.weight}}</span>
+            <input ng-model="item.name" class="item-name"/>
+            <input ng-model="item.quantity" class="item-quantity"/>
+            <input ng-model="item.weight" class="item-weight"/>
+            <button ng-click="item.shown = item.shown ? false : true">{{item.shown?"-":"+"}}</button>
+            <div ng-show="item.shown">
+                <textarea ng-model="item.description"></textarea>
+            </div>
+        </div>
+    </div>
+    <hr/>
+    <span>total weight : {{inventory.totalWeight( inventory.items )}}</span>
     <hr>
     <form ng-submit="inventory.addItem()" class="item">
-        <input ng-model="inventory.edit.item.name" ng-blur="inventory.details( inventory.edit.item )" placeholder="name" class="item-name"/>
+        <input ng-model="inventory.edit.item.name" ng-blur="inventory.details( inventory.edit.item )" placeholder="new item" class="item-name"/>
         <input ng-model="inventory.edit.item.quantity" ng-blur="inventory.details( inventory.edit.item )" placeholder="quantity" class="item-quantity"/>
         <input ng-model="inventory.edit.item.weight" ng-blur="inventory.details( inventory.edit.item )" placeholder="weight" class="item-weight"/>
         <button type="submit">+</button>

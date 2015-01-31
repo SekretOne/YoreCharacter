@@ -2,7 +2,8 @@
     <h1>Select a character</h1>
     <ul>
         <li ng-repeat="character in gallery.characters">
-            <a href="char/{{character.id}}/front">{{character.bio.name}}</a>
+            <a href="char/{{character.id}}/front">{{character.bio.name}} Level {{character.experience.level}}</a>
         </li>
     </ul>
+    <button ng-click="gallery.makeCharacter()">New Character</button>
 </div>
