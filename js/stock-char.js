@@ -2,45 +2,45 @@
     yore.makeCharacter = function (){
         var sheet = yore.makeSheet();
 
-        var str = sheet.stat("str").set({is: "ability"});
-        var dex = sheet.stat("dex").set({is: "ability"});
-        var con = sheet.stat("con").set({is: "ability"});
-        var int = sheet.stat("int").set({is: "ability"});
-        var wis = sheet.stat("wis").set({is: "ability"});
-        var cha = sheet.stat("cha").set({is: "ability"});
-        var strMod = sheet.stat("str mod").set({is: "ability mod", method: "ability mod"}).addChild(str);
-        var dexMod = sheet.stat("dex mod").set({is: "ability mod", method: "ability mod"}).addChild(dex);
-        var conMod = sheet.stat("con mod").set({is: "ability mod", method: "ability mod"}).addChild(con);
-        var intMod = sheet.stat("int mod").set({is: "ability mod", method: "ability mod"}).addChild(int);
-        var wisMod = sheet.stat("wis mod").set({is: "ability mod", method: "ability mod"}).addChild(wis);
-        var chaMod = sheet.stat("cha mod").set({is: "ability mod", method: "ability mod"}).addChild(cha);
+        var str = sheet.stat( { name: "str", is: "ability"});
+        var dex = sheet.stat( { name: "dex", is: "ability"});
+        var con = sheet.stat( { name: "con", is: "ability"});
+        var int = sheet.stat( { name: "int", is: "ability"});
+        var wis = sheet.stat( { name: "wis", is: "ability"});
+        var cha = sheet.stat( { name: "cha", is: "ability"});
+        var strMod = sheet.stat( {name : "str mod", is: "ability mod", method: "ability mod"}).addChild(str);
+        var dexMod = sheet.stat( {name : "dex mod", is: "ability mod", method: "ability mod"}).addChild(dex);
+        var conMod = sheet.stat( {name : "con mod", is: "ability mod", method: "ability mod"}).addChild(con);
+        var intMod = sheet.stat( {name : "int mod", is: "ability mod", method: "ability mod"}).addChild(int);
+        var wisMod = sheet.stat( {name : "wis mod", is: "ability mod", method: "ability mod"}).addChild(wis);
+        var chaMod = sheet.stat( {name : "cha mod", is: "ability mod", method: "ability mod"}).addChild(cha);
 
-        str.addend(sheet).set({value: 15});
-        dex.addend(sheet).set({value: 13});
-        con.addend(sheet).set({value: 12});
-        int.addend(sheet).set({value: 10});
-        wis.addend(sheet).set({value: 9});
-        cha.addend(sheet).set({value: 8});
+        str.addend().set({value: 15});
+        dex.addend().set({value: 13});
+        con.addend().set({value: 12});
+        int.addend().set({value: 10});
+        wis.addend().set({value: 9});
+        cha.addend().set({value: 8});
 
-        var bab = sheet.stat("base attack bonus").set({is: "offense", method: "constant", value: 3});
+        var bab = sheet.stat( { name : "base attack bonus", is: "offense", method: "constant", value: 3 });
 
-        var cmb = sheet.stat("combat maneuver bonus").set({is: "offense"});
+        var cmb = sheet.stat( { name : "combat maneuver bonus", is: "offense"});
         cmb.addChild(bab).addChild(strMod);
 
-        var ac = sheet.stat("armor class").set({is: "defense"});
-        ac.addend(sheet).set({value: 10});
+        var ac = sheet.stat( { name : "armor class", is: "defense"});
+        ac.addend().set({value: 10});
         ac.addChild(dexMod);
 
-        var cmd = sheet.stat("combat maneuver defense").set({is: "defense"});
-        cmd.addend(sheet).set({value: 10});
+        var cmd = sheet.stat( { name :"combat maneuver defense", is: "defense"});
+        cmd.addend().set({ value: 10 });
         cmd.addChild(dexMod).addChild(strMod).addChild(bab);
 
         //saves
-        var ref = sheet.stat("reflex").set({is: "save"}).addend({name: "base"});
+        var ref = sheet.stat( { name: "reflex", is: "save" });//.addend({name: "base"});
         ref.addChild(dexMod);
-        var fort = sheet.stat("fortitude").set({is: "save"}).addend({name: "base"});
+        var fort = sheet.stat( { name:"fortitude", is: "save" });//.addend({name: "base"});
         fort.addChild(conMod);
-        var will = sheet.stat("will").set({is: "save"}).addend({name: "base "});
+        var will = sheet.stat( { name: "will", is: "save"});//.addend({name: "base" });
         will.addChild(wisMod);
 
         skillBlock([

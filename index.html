@@ -4,14 +4,17 @@
     <meta charset="UTF-8">
     <title>Yore Character</title>
 
-    <script src="js/angular.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.0rc1/angular-route.min.js"></script>
-    <!--<script src="js/angular-ui-router.js"></script>-->
+    <script src="bower_components/angular/angular.min.js"></script>
+    <script src="bower_components/angular-route/angular-route.min.js"></script>
+    <script src="bower_components/angular-bootstrap/ui-bootstrap.min.js"></script>
     <script src="js/yore.js"></script>
-    <script src="js/test.js"></script>
+    <script src="js/stock-char.js"></script>
     <script src="js/app.js"></script>
     <base href="/YoreChar3/" target="_parent">
+
     <link rel="stylesheet" type="text/css" href="css/styles.css"/>
+    <link rel="stylesheet" type="text/css" href="bower_components/bootstrap/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" type="text/css" href="bower_components/bootstrap/dist/css/bootstrap-theme.min.css"/>
 </head>
 <body ng-app="yoreApp" ng-controller="MainCtrl as main">
     <div ng-view></div>

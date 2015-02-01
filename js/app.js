@@ -3,7 +3,7 @@
  */
 
 (function(){
-    var app = angular.module( "yoreApp", [ 'ngRoute'] );
+    var app = angular.module( "yoreApp", [ 'ngRoute', 'ui.bootstrap'] );
 
     app.run(function($rootScope, $templateCache) {
         $rootScope.$on('$viewContentLoaded', function() {
@@ -100,17 +100,11 @@
         this.edit = {};
         this.edit.item = sheet.makeItem();
         this.addItem = function( ){
-            console.log( "pushing new item", this.edit.item );
             this.items.push( this.edit.item );
             this.edit.item = sheet.makeItem();
         };
 
-        this.details = function( comparison ){
-            console.log( "on blur", this.edit.item, comparison );
-        };
-
         this.totalWeight = function( items ){
-            console.log( "doing weight" );
              for( var total= 0, i = 0; i < items.length; i++ ) {
                  total += items[i].quantity * items[i].weight;
              }
@@ -124,7 +118,6 @@
         save();
         this.charId = $routeParams.charId;
         var sheet =  yore.getSheet( this.charId );
-        console.log( sheet );
 
         this.abilities = [];
         var abilityMods = sheet.getAll( { is : "ability mod" } );
@@ -185,10 +178,9 @@
 
     function loadFromStorage(  ){
         //load from local storage
+        //localStorage.removeItem( "sheets");
         var data = localStorage.getItem( "sheets" );
-        console.log( data );
         if( data !== null ){
-            console.log("should load");
             data = angular.fromJson( data );
             var sheetMap = {};
             for( var sheetId in data ){
@@ -199,9 +191,7 @@
     }
 
     function save(  ){
-        //console.log("saving");
-        var json = angular.toJson( yore.getSheets(), true );
-        console.log( json );
-        localStorage.setItem( "sheets",  json );
+        var sheets = yore.getSheets();
+        localStorage.setItem( "sheets", angular.toJson( sheets ) );
     }
 })();

@@ -17,7 +17,7 @@
             <input ng-model="item.quantity" class="item-quantity"/>
             <input ng-model="item.weight" class="item-weight"/>
             <button ng-click="item.shown = item.shown ? false : true">{{item.shown?"-":"+"}}</button>
-            <div ng-show="item.shown">
+            <div collapse="!item.shown">
                 <textarea ng-model="item.description"></textarea>
             </div>
         </div>

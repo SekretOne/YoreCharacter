@@ -5,13 +5,13 @@
     <a href="char/{{front.charId}}/inventory">Inventory</a>
     <div>
         <h4>Abilities</h4>
-        <ul>
-            <li ng-repeat="ability in front.abilities">
+        <div>
+            <div ng-repeat="ability in front.abilities">
                 <span class="slot-small-text">{{ability.score.name}}</span>
                 <span class="slot-small">{{ability.mod.value | modifier}}</span>
                 <span class="slot-small">{{ability.score.value}}</span>
-            </li>
-        </ul>
+            </div>
+        </div>
     </div>
     <div>
         <strong>BAB</strong>
@@ -42,8 +42,8 @@
         <ul>
             <li ng-repeat="skill in front.skills">
                 <input type="checkbox" ng-model="skill.cs.classSkill" ng-change="skill.cs.update( front.sheet )"/>
-                <strong class="slot-small" ng-class="{notModified : !skill.total.modified}">{{skill.total.value | modifier}} </strong>
-                <span class="slot-text">{{skill.total.name}}</span>
+                <strong class="slot-small" ng-class="{subdued : !skill.total.modified}">{{skill.total.value | modifier}} </strong>
+                <span class="slot-text" ng-class="{subdued : !skill.total.modified}">{{skill.total.name}}</span>
                 <input type="number" ng-model="skill.ranks.value" min='0' ng-change="skill.ranks.update( front.sheet )"/>
             </li>
         </ul>

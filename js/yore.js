@@ -5,7 +5,7 @@
 (function(){
     var yore = {};
 
-    var sheets = yore._sheets = {};  //map of sheets that have been created
+    var sheets = {};  //map of sheets that have been created
 
     yore.makeSheet = function(){
         var sheet = new yore.Sheet();
@@ -59,7 +59,9 @@
             if( prop === 'bindables' ){
                 var bindableData = data[prop];
                 for( var bindableId in bindableData ){
-                     new Stat( this, bindableData[bindableId] );
+                     this.add(
+                         new Stat( bindableData[bindableId] )
+                     );
                 }
             }
             else{
@@ -69,9 +71,11 @@
     };
 
     yore.Sheet.prototype = {
-        stat : function( name ){
-            var stat = new Stat(this);
-            stat.name = name;
+        stat : function( data ){
+            var stat = new Stat( data );
+            stat.id = this.autoNumber++;
+            stat.sheet = this.id;
+            this.add( stat );
             return stat;
         },
         addend : function( stat ){
@@ -83,7 +87,7 @@
             return addend;
         },
         skill : function( name, abilityName ){
-            var skill = this.stat().set( {is : "skill", name : name } );
+            var skill = this.stat( {is : "skill", name : name } );
             var abilityMod = this.get( { name : abilityName + " mod", is : "ability mod" } );
             skill.addChild( abilityMod );
             var ranks = skill.addend().set( { name : "ranks", value : 0, is : "ranks" } );
@@ -106,39 +110,15 @@
             }
             return found;
         },
+
         getById : function( id ){
             return this.bindables[id];
-        },
-        getChildren : function( bindable ){
-            var id = bindable.id;
-            var children = [];
-            for( var i = 0; i < this.bindings.length; i++ ){
-                var binding = this.bindings[i];
-                if( binding[0] === id ){
-                    var childId = binding[1];
-                    children.push( this.getById( childId ) );
-                }
-            }
-            return children;
-        },
-
-        getParents : function( bindable ){
-            var id = bindable.id;
-            var parents = [];
-            for( var i = 0; i < this.bindings.length; i++ ){
-                var binding = this.bindings[i];
-                if( binding[1] === id ){
-                    var parentId = binding[0];
-                    parents.push( this.getById( parentId ) );
-                }
-            }
-            return parents;
         },
         add : function ( bindable ){
             this.bindables[bindable.id] =  bindable ;
         },
         remove : function( bindable ){
-            var parents = this.getParents( bindable );
+            var parents = bindable.getParents();
             var thisId = bindable.id;
 
             for( var i = 0 ; i < this.bindings.length; i++ ){  //remove all bindings
@@ -163,19 +143,18 @@
      * @param data
      * @constructor
      */
-    function Stat( sheet, data ){
+    function Stat( data ){
         this.is = 'S';
-        this.id = sheet.autoNumber++;
+        this.id = '-1';
         this.name = "untitled";
         this.value = 0;
         this.type = "untyped";
         this.method = "sum";
-        this.sheet = sheet.id;
+        this.sheet = '-';
 
         for( var prop in data ){
             this[prop] = data[prop];
         }
-        sheet.add( this );
     }
 
     Stat.prototype.update = function(){
@@ -212,18 +191,26 @@
     Stat.prototype.addChild = function( stat ){
         var sheet = getSheet( this.sheet );
         sheet.bind( this, stat );
-        this.update();
         return this;
     };
 
-    Stat.prototype.addend = function( ){
+    Stat.prototype.addend = function( opts ){
         var sheet = getSheet( this.sheet );
-        return sheet.addend( this );
+        var addend = sheet.addend( this).set(opts);
+        return addend;
     };
 
     Stat.prototype.getChildren = function( test ){
         var sheet = getSheet( this.sheet );
-        var children = sheet.getChildren( this );
+        var id = this.id;
+        var children = [];
+        for( var i = 0; i < sheet.bindings.length; i++ ){
+            var binding = sheet.bindings[i];
+            if( binding[0] === id ){
+                var parentId = binding[1];
+                children.push( sheet.getById( parentId ) );
+            }
+        }
         return test === undefined ? children : filterArray( children, test );
     };
 
@@ -233,7 +220,16 @@
 
     Stat.prototype.getParents = function(){
         var sheet = getSheet( this.sheet );
-        return sheet.getParents( this );
+        var id = this.id;
+        var parents = [];
+        for( var i = 0; i < sheet.bindings.length; i++ ){
+            var binding = sheet.bindings[i];
+            if( binding[1] === id ){
+                var parentId = binding[0];
+                parents.push( sheet.getById( parentId ) );
+            }
+        }
+        return parents;
     };
 
     var valueMethods = [
