@@ -5,46 +5,64 @@
     <a href="char/{{front.charId}}/inventory">Inventory</a>
     <div>
         <h4>Abilities</h4>
-        <div>
-            <div ng-repeat="ability in front.abilities">
-                <span class="slot-small-text">{{ability.score.name}}</span>
-                <span class="slot-small">{{ability.mod.value | modifier}}</span>
-                <span class="slot-small">{{ability.score.value}}</span>
+        <div class="section-abilities">
+            <div ng-repeat="ability in front.abilities" class="ability-element">
+                <span class="ability">{{ability.score.name}}</span>
+                <span class="slot-large">{{ability.mod.value | modifier}}</span>
+                <span class="slot-large">{{ability.score.value}}</span>
             </div>
         </div>
     </div>
     <div>
-        <strong>BAB</strong>
-        <span>{{front.bab.value | modifier}}</span>
+        <div>
+            <div class="hit-dice">
+                <input class="die" ng-repeat="die in front.hphd.getChildren()" ng-model="die.value" ng-change="die.update()" ng-blur="front.checkDie( die )"/>
+            </div>
+            <input type="number" step=".1" class="die" ng-model="front.newDie"/>
+            <button ng-click="front.addDie( front.newDie )">+</button>
+        </div>
+
+        <div class="single-stat rising-container">
+            <span class="caption">NL</span>
+            <div>
+                <input class="slot-large" ng-model="front.nl.value"/>
+            </div>
+        </div>
+
+        <div class="single-stat rising-container">
+            <span class="caption">wounds</span>
+            <div>
+                <input class="slot-large" ng-model="front.wounds.value" ng-change="front.currentHp = front.hp.value - front.wounds.value" ng-blur="front.wounds.update()"/>
+            </div>
+        </div>
+
+        <div class="single-stat rising-container">
+            <span class="caption">current</span>
+            <div>
+                <label class="slot-large {{front.health()}}" >{{front.hp.value - front.wounds.value}}</label>
+            </div>
+        </div>
+
+        <yore-stat stat="front.hp" display-name="'HP'" dc="true"></yore-stat>
     </div>
-    <div>
-        <strong>CMB</strong>
-        <span>{{front.cmb.value | modifier}}</span>
-    </div>
-    <div>
-        <strong>AC</strong>
-        <span>{{front.ac.value}}</span>
-    </div>
-    <div>
-        <strong>CMD</strong>
-        <span>{{front.cmd.value}}</span>
-    </div>
+    <yore-stat stat="front.bab" display-name="'BAB'"></yore-stat>
+    <yore-stat stat="front.cmb" display-name="'CMB'"></yore-stat>
+    <yore-stat stat="front.ac" display-name="'AC'" dc="true"></yore-stat>
+    <yore-stat stat="front.cmd" display-name="'CMD'" dc="true"></yore-stat>
     <div>
         <h4>Saves</h4>
-        <ul>
-            <li>Fort: {{front.fort.value | modifier}}</li>
-            <li>Ref: {{front.ref.value | modifier}}</li>
-            <li>Will: {{front.will.value | modifier}}</li>
-        </ul>
+        <yore-stat stat="front.fort" display-name="'Fort'"></yore-stat>
+        <yore-stat stat="front.ref" display-name="'Ref'"></yore-stat>
+        <yore-stat stat="front.will" display-name="'Will'"></yore-stat>
     </div>
     <div>
         <h4>Skills</h4>
         <ul>
             <li ng-repeat="skill in front.skills">
-                <input type="checkbox" ng-model="skill.cs.classSkill" ng-change="skill.cs.update( front.sheet )"/>
+                <input type="checkbox" ng-model="skill.cs.classSkill" ng-change="skill.cs.update()"/>
                 <strong class="slot-small" ng-class="{subdued : !skill.total.modified}">{{skill.total.value | modifier}} </strong>
                 <span class="slot-text" ng-class="{subdued : !skill.total.modified}">{{skill.total.name}}</span>
-                <input type="number" ng-model="skill.ranks.value" min='0' ng-change="skill.ranks.update( front.sheet )"/>
+                <input type="number" ng-model="skill.ranks.value" min='0' ng-change="skill.ranks.update()"/>
             </li>
         </ul>
         <span>total ranks : {{front.totalRanks()}}</span>

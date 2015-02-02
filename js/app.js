@@ -69,7 +69,12 @@
     app.controller( "CharacterGalleryCtrl", ['$route', '$routeParams', '$location', function($route, $routeParams, $location) {
         save();
         this.characters = yore.getSheets();
-        this.makeCharacter = yore.makeCharacter;
+        this.makeCharacter = function(){
+            var character= yore.makeCharacter();
+            $location.path( "char/" + character.id + "/overview" );
+        };
+
+        this.remove = function( character ){ delete this.characters[ character.id ]; }
     }]);
 
     /**
@@ -147,6 +152,11 @@
         this.ref = sheet.get( {name : "reflex", is : "save"} );
         this.will = sheet.get( {name : "will", is : "save"} );
 
+        this.hphd = sheet.get( { is : "hp from hd"} );
+        this.hp = sheet.get( { name : "hit points", is : "hp" } );
+        this.wounds = sheet.get( { is : "wounds" });
+        this.nl = sheet.get( { is : "nl" });
+
         this.totalRanks = function(){
             var total = 0;
             for( var i = 0; i < this.skills.length; i++ ){
@@ -154,28 +164,58 @@
             }
             return total;
         };
+
+        this.checkDie = function( die ){  //pops this die if set to nothing.
+            if( die.value == 0 || die.value == NaN ){
+                die.removeSelf();
+            }
+            save();
+        };
+
+        this.addDie = function( value ){
+            this.hphd.addend({ name : "hit die", is : "hit die", value : value });
+            this.newDie = '';
+            this.currentHp = this.hp.value - this.wounds.value;  //refresh current hit points;
+        };
+
+        this.health = function(){
+            var ratio = this.wounds.value / this.hp.value;
+            if( ratio < 1/3 ){ return "healthy" }
+            if( ratio < 2/3 ){ return "wounded" }
+            if( ratio < 1 ){ return "critical" }
+            return "negative";
+        }
     }]);
 
+    //================================================================================================================//
+
+    app.directive( "yoreStat", function(){
+        return {
+            restrict: 'E',
+            scope : { stat : "=", displayName : "=", dc: "=" },
+            templateUrl: "directives/yoreStat.html",
+            controller : function( $scope ){
+                this.displayName = $scope.displayName === undefined ? $scope.stat.name : $scope.displayName;
+                this.collapsed = true;
+            },
+            controllerAs : "statCtrl"
+        };
+    });
+
+    //----------------------------------------------------------------------------------------------------------------//
     app.filter( "modifier", function(){
         return function( value ){
             return value >= 0 ? "+"+ value : value;
         }
     });
 
-    //*********//
-    function makeStatCollection( sheet, names, stats ){
-        var collection = [];
-        var parents = sheet.getAll( stats[0] );
-        for( var i = 0; i < parents.length; i++ ){
-            var parent = parents[i];
-            var element = {};
-            element[ names[0] ] = parent;
-            for( var j = 1; j < names.length; j++ ){
-                element[ name[j] ] = parent.getChildren( stats[j] )[0];
-            }
+    app.filter( "typeClear", function(){
+        return function( type ){
+            return type === "untyped" ? "" : type;
         }
-    }
+    });
 
+    //=================================================================================================================//
     function loadFromStorage(  ){
         //load from local storage
         //localStorage.removeItem( "sheets");

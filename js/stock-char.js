@@ -22,17 +22,18 @@
         wis.addend().set({value: 9});
         cha.addend().set({value: 8});
 
-        var bab = sheet.stat( { name : "base attack bonus", is: "offense", method: "constant", value: 3 });
+        var bab = sheet.stat( { name : "base attack bonus", is: "offense" });
+        bab.addend( { name: "from class" } );
 
         var cmb = sheet.stat( { name : "combat maneuver bonus", is: "offense"});
         cmb.addChild(bab).addChild(strMod);
 
         var ac = sheet.stat( { name : "armor class", is: "defense"});
-        ac.addend().set({value: 10});
+        ac.addend({ name: "base", value: 10});
         ac.addChild(dexMod);
 
         var cmd = sheet.stat( { name :"combat maneuver defense", is: "defense"});
-        cmd.addend().set({ value: 10 });
+        cmd.addend({ name: "base", value: 10 });
         cmd.addChild(dexMod).addChild(strMod).addChild(bab);
 
         //saves
@@ -42,6 +43,17 @@
         fort.addChild(conMod);
         var will = sheet.stat( { name: "will", is: "save"});//.addend({name: "base" });
         will.addChild(wisMod);
+
+        var hphd = sheet.stat( {name: "hp from hit dice", is : "hp from hd"});
+        var hd = sheet.stat({ name: "hit dice", is : "hd", method : "count" }).addChild( hphd );
+
+        var hp = sheet.stat({ name : "hit points", is : "hp" })
+            .addChild( hphd );
+        var bonusCon = hp.addend({ name: "bonus hp from con", is : "hp", method : "multiply" });
+        bonusCon.addChild( hd).addChild( conMod );
+
+        var wounds = sheet.stat({ name : "wounds", is : "wounds", method : "constant" });
+        var nl = sheet.stat({ name : "non lethal", is : "nl", method : "constant" });
 
         skillBlock([
             {

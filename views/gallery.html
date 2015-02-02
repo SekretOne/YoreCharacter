@@ -3,6 +3,7 @@
     <ul>
         <li ng-repeat="character in gallery.characters">
             <a href="char/{{character.id}}/front">{{character.bio.name}} Level {{character.experience.level}}</a>
+            <button ng-click="gallery.remove( character )">X</button>
         </li>
     </ul>
     <button ng-click="gallery.makeCharacter()">New Character</button>

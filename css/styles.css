@@ -1,3 +1,105 @@
+body{
+    padding-left: 20px;
+}
+
+input[type="checkbox"]{
+    width: 20px;
+    height: 20px;
+}
+
+.die {
+    width: 30px;
+    height: 30px;
+    font-size: large;
+    text-align: center;
+    border: 0;
+    border-top: 2px lightgray solid;
+    border-right: 2px gray solid;
+    background-color: darkgray;
+    margin-right: 2px;
+}
+
+.die:nth-child( 5n ){
+    margin-right: 10px;
+}
+
+.die::-webkit-inner-spin-button,
+.die::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.section-abilities {
+    display: inline-block;
+}
+
+.section-abilities .ability{
+    display: inline-block;
+    border: gray 1px solid;
+    border-radius: 4px;
+    width: 50px;
+    text-align: center;
+    font-size: large;
+    font-weight: bold;
+    background-color: #4cae4c;
+}
+
+.ability:hover{
+    background-color: #529f52;
+}
+
+.ability:active{
+    border: 1px inset;
+    background-color: #468c46;
+    text-indent: 1px;
+}
+
+.rising-container{
+    display: inline-block;
+    vertical-align: top;
+}
+
+.ability-element{
+    margin-bottom: 4px;
+}
+
+.single-stat{
+    display: inline-block;
+}
+
+.slot-large{
+    display: inline-block;
+    border: gray 1px solid;
+    border-radius: 4px;
+    width: 50px;
+    text-align: center;
+    font-size: large;
+}
+
+.sub-stat{
+    font-size: small;
+}
+
+.sub-stat-description{
+    display: inline-block;
+}
+
+.sub-stat-description span{
+    color: gray;
+    display: block;
+    text-align: center;
+}
+
+.slot-large:hover{
+    background-color: lightcyan;
+}
+
+.slot-large:active{
+    border: inset 1px;
+    background-color: lightblue;
+    text-indent: 1px;
+}
+
 .slot-small {
     display : inline-block;
     width : 2em;
@@ -5,6 +107,13 @@
     text-align : center;
     margin-bottom: 2px;
     height:  1.3em;
+}
+
+.caption {
+    font-size: x-small;
+    font-weight: lighter;
+    text-align: center;
+    display: block;
 }
 
 .slot-text {
@@ -72,4 +181,24 @@
     display: block;
     width: 304px;
     height: 80px;
+}
+
+.healthy{
+    font-weight: bold;
+    color : green;
+}
+
+.wounded{
+    font-weight: bold;
+    color: #882;
+}
+
+.critical{
+    font-weight: bold;
+    color: red;
+}
+
+.negative{
+    font-weight: bold;
+    color: #420;
 }

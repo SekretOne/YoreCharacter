@@ -128,8 +128,10 @@
                     i--;
                 }
             }
-            for( var j = 0; j < parents.length; j++ )
-            this.bindables.delete( bindable.id );
+            for( var j = 0; j < parents.length; j++ ){
+                parents[j].update();  //update the now unbound parents.
+            }
+            delete this.bindables[ bindable.id ];
         },
         bind : function ( parent, child ){
             this.bindings.push( [ parent.id, child.id ] );
@@ -188,19 +190,19 @@
         return this;
     };
 
-    Stat.prototype.addChild = function( stat ){
+    Stat.prototype.addChild = function addChild( stat ){
         var sheet = getSheet( this.sheet );
         sheet.bind( this, stat );
         return this;
     };
 
-    Stat.prototype.addend = function( opts ){
+    Stat.prototype.addend = function addend( opts ){
         var sheet = getSheet( this.sheet );
         var addend = sheet.addend( this).set(opts);
         return addend;
     };
 
-    Stat.prototype.getChildren = function( test ){
+    Stat.prototype.getChildren = function getChildren( test ){
         var sheet = getSheet( this.sheet );
         var id = this.id;
         var children = [];
@@ -232,6 +234,15 @@
         return parents;
     };
 
+    Stat.prototype.removeSelf = function removeSelf(){
+        getSheet( this.sheet).remove( this );
+    };
+
+    Stat.prototype.setVal = function setVal( value ){
+        this.value = value;
+        this.update();
+    };
+
     var valueMethods = [
         {
             name : "constant",
@@ -252,9 +263,9 @@
                 var value = 0;
                 //don't use groups yet
                 for( var i = 0; i < children.length; i++ ){
-                    value += children[i].value;
+                    value += Number( children[i].value );  //or 0
                 }
-                return value;
+                return Math.floor( value );
             }
         },
         {
@@ -300,6 +311,25 @@
                 if ( children.length === 0 ) return 0;
                 var ranks = children[0];
                 return ( ranks.value > 0 && stat.classSkill ? 3 : 0 );
+            }
+        },
+        {
+            name : "count",
+            val : function( stat ){
+                for( var children = stat.getChildren(), i = 0, total = 0; i < children.length; i++ ){
+                    total += children[i].getChildren().length;
+                }
+                return total;
+            }
+        },
+        {
+            name : "multiply",
+            val : function( stat ){
+                var children = stat.getChildren();
+                for( var i = 0, product = 1; i < children.length; i++ ){
+                    product = product * children[i].value;
+                }
+                return product;
             }
         }
     ];

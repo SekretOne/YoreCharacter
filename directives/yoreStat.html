@@ -1,0 +1,21 @@
+<div class="rising-container">
+    <div class="single-stat">
+        <span class="caption">{{statCtrl.displayName}}</span>
+        <div ng-click="statCtrl.collapsed = !statCtrl.collapsed" class="slot-large">
+            <span ng-if="dc">{{stat.value}}</span>
+            <span ng-if="!dc">{{stat.value | modifier}}</span>
+        </div>
+    </div>
+    <div collapse="statCtrl.collapsed">
+        <div ng-repeat="child in stat.getChildren()">
+            <span class="slot-large sub-stat">{{child.value | modifier }}</span>
+            <div class="sub-stat-description">
+                <span>{{child.name}}</span>
+                <span>{{child.type | typeClear}}</span>
+            </div>
+        </div>
+        <div>
+            <label class="slot-large sub-stat">new</label>
+        </div>
+    </div>
+</div>
