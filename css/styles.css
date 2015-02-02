@@ -29,6 +29,10 @@ input[type="checkbox"]{
     margin: 0;
 }
 
+input.die{
+    -moz-appearance:textfield;
+}
+
 .section-abilities {
     display: inline-block;
 }
