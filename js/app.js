@@ -5,11 +5,11 @@
 (function(){
     var app = angular.module( "yoreApp", [ 'ngRoute', 'ui.bootstrap'] );
 
-    app.run(function($rootScope, $templateCache) {
+    /*app.run(function($rootScope, $templateCache) {
         $rootScope.$on('$viewContentLoaded', function() {
             $templateCache.removeAll();
         });
-    });
+    });*/
 
     loadFromStorage();
 
@@ -44,16 +44,6 @@
         $locationProvider.baseHref = "/YoreChar3/"
     }]);
 
-    /**
-     * Clears the template cache on redirect so weird behavior doesn't occur during development.
-     */
-    /*app.run(function($rootScope, $templateCache) {
-        $rootScope.$on('$routeChangeStart', function(event, next, current) {
-            if (typeof(current) !== 'undefined'){
-                $templateCache.remove(current.templateUrl);
-            }
-        });
-    });*/
 
     app.controller( "MainCtrl", ['$route', '$routeParams', '$location',
         function($route, $routeParams, $location){
@@ -194,13 +184,28 @@
             restrict: 'E',
             scope : { stat : "=", displayName : "=", dc: "=" },
             templateUrl: "directives/yoreStat.html",
-            controller : function( $scope ){
-                this.displayName = $scope.displayName === undefined ? $scope.stat.name : $scope.displayName;
-                this.collapsed = true;
-            },
+            controller : "StatDetailCtrl",
             controllerAs : "statCtrl"
         };
-    });
+    })
+        .controller( "StatDetailCtrl", [ "$scope", "$modal", function( $scope, $modal){
+            this.displayName = $scope.displayName === undefined ? $scope.stat.name : $scope.displayName;
+            this.collapsed = true;
+
+            this.openDetail = function( addend ){
+                var modal = $modal.open({
+                   templateUrl : "modals/addend-editor.html",
+                    controller : "AddendEditorCtrl",
+                    controllerAs : "editor",
+                    resolve: {
+                        addend: function(){ return addend }
+                    }
+                });
+            }
+        }])
+        .controller( "AddendEditorCtrl", [ "$modalInstance", "addend", function( $modalInstance, addend){
+            this.addend = addend;
+        }]);
 
     //----------------------------------------------------------------------------------------------------------------//
     app.filter( "modifier", function(){
