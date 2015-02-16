@@ -2,6 +2,10 @@ body{
     padding-left: 20px;
 }
 
+div.yore-modal {
+    padding : 10px;
+}
+
 input[type="checkbox"]{
     width: 20px;
     height: 20px;
@@ -63,6 +67,10 @@ input.die{
     vertical-align: top;
 }
 
+.rising-container input{
+    padding: 0;
+}
+
 .ability-element{
     margin-bottom: 4px;
 }
@@ -72,6 +80,7 @@ input.die{
 }
 
 .slot-large{
+    padding: 0;
     display: inline-block;
     border: gray 1px solid;
     border-radius: 4px;
