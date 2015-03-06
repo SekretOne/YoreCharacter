@@ -51,7 +51,7 @@
         this.autoNumber = 0;
         this.bindables = {};
         this.bindings = [];
-        this.stackableTypes = ["untyped", "dodge", "penalty"];  //what types are allowed to stack
+        this.stackableTypes = ["", "dodge", "penalty"];  //what types are allowed to stack
         this.items = [];
 
         //-------------------------------//
@@ -150,7 +150,7 @@
         this.id = '-1';
         this.name = "untitled";
         this.value = 0;
-        this.type = "untyped";
+        this.type = "";
         this.method = "sum";
         this.sheet = '-';
 
@@ -169,7 +169,7 @@
     };
 
     Stat.prototype.recalculate = function(){
-        var method = valueMethodsMap[ this.method ];
+        var method = valueMethods[ this.method ];
         this.value = method.val( this );
     };
 
@@ -217,7 +217,8 @@
     };
 
     Stat.prototype.getChild = function( test ){
-        return this.getChildren( test )[0];
+        var children = this.getChildren( test );
+        return children.length > 0 ? children[0] : null;
     };
 
     Stat.prototype.getParents = function(){
@@ -243,102 +244,98 @@
         this.update();
     };
 
-    var valueMethods = [
-        {
-            name : "constant",
+    var valueMethods = {};
+
+    /**
+     *
+     * @param name
+     * @param func
+     */
+    function valueMethod( name, func ){
+        valueMethods[ name ] = {
+            name : name,
             val : function( stat ){
-                return stat.value;
-            }
-        },
-        {
-            name : "override",
-            val : function( stat ){
-                return stat.value;
-            }
-        },
-        {
-            name : "sum",
-            val : function( stat ){
-                var children = stat.getChildren();
-                var value = 0;
-                //don't use groups yet
-                for( var i = 0; i < children.length; i++ ){
-                    value += Number( children[i].value );  //or 0
-                }
-                return Math.floor( value );
-            }
-        },
-        {
-            name : "skill sum",
-            val : function( stat ){
-                var children = stat.getChildren();
-                var value = 0;
-                //don't use groups yet
-                for( var i = 0; i < children.length; i++ ){
-                    value += children[i].value;
-                }
-                var ranks =
-                stat.modified = ( children.length > 3 || filterArray( children, { is : 'ranks' })[0].value > 0 );
-                return value;
-            }
-        },
-        {
-            name : "equation",
-            val : function( stat ){
-                var children = stat.getChildren();
-                return children.length > 0 ? children[0].value : 0;
-            }
-        },
-        {
-            name : "stat",
-            val : function( stat ){
-                var children = stat.getChildren(  );
-                return children.length > 0 ? children[0].value : 0;
-            }
-        },
-        {
-            name : "ability mod",
-            val : function( stat ){
-                var children = stat.getChildren();
-                var total = children.length > 0 ? children[0].value : 0;
-                return Math.floor( (total / 2) - 5 );
-            }
-        },
-        {
-            name : "class skill",
-            val : function(  stat ){
-                var children = stat.getChildren();
-                if ( children.length === 0 ) return 0;
-                var ranks = children[0];
-                return ( ranks.value > 0 && stat.classSkill ? 3 : 0 );
-            }
-        },
-        {
-            name : "count",
-            val : function( stat ){
-                for( var children = stat.getChildren(), i = 0, total = 0; i < children.length; i++ ){
-                    total += children[i].getChildren().length;
-                }
-                return total;
-            }
-        },
-        {
-            name : "multiply",
-            val : function( stat ){
-                var children = stat.getChildren();
-                for( var i = 0, product = 1; i < children.length; i++ ){
-                    product = product * children[i].value;
-                }
-                return product;
+                return func( stat );
             }
         }
-    ];
+    }
+    yore.valueMethod = valueMethod;
 
-    var valueMethodsMap = Map( valueMethods, "name" );
+    valueMethod( "constant", function( stat ){
+        return stat.value;
+    });
+
+    valueMethod( "sum", function(stat){
+        var children = stat.getChildren();
+        var value = 0;
+        //don't use groups yet
+        for( var i = 0; i < children.length; i++ ){
+            value += Number( children[i].value );  //or 0
+        }
+        return Math.floor( value );
+    });
+
+    valueMethod( "skill sum", function(stat){
+        var children = stat.getChildren();
+        var value = 0;
+        //don't use groups yet
+        for( var i = 0; i < children.length; i++ ){
+            value += children[i].value;
+        }
+        var ranks =
+            stat.modified = ( children.length > 3 || filterArray( children, { is : 'ranks' })[0].value > 0 );
+        return value;
+    });
+
+    valueMethod( "equation", function( stat ){
+        var child = stat.getChild();
+        if( child != null ){
+            var data = stat.data;
+            var value = child.value;
+            if( data.factor != "" ){ value = value * data.factor }
+            if( data.min != "" ){ value = Math.max( value, data.min ); }
+            if( data.max != "" ){ value = Math.min( value, data.max ); }
+            return Math.floor( value );
+        }
+        return 0;
+    });
+
+    valueMethod( "stat", function( stat ){
+        var child = stat.getChild(  );
+        return child === null ? 0 : child.value;
+    });
+
+    valueMethod( "ability mod", function( stat ){
+        var children = stat.getChildren();
+        var total = children.length > 0 ? children[0].value : 0;
+        return Math.floor( (total / 2) - 5 );
+    });
+
+    valueMethod( "class skill", function(  stat ){
+        var children = stat.getChildren();
+        if ( children.length === 0 ) return 0;
+        var ranks = children[0];
+        return ( ranks.value > 0 && stat.classSkill ? 3 : 0 );
+    });
+
+    valueMethod( "count", function( stat ){
+        for( var children = stat.getChildren(), i = 0, total = 0; i < children.length; i++ ){
+            total += children[i].getChildren().length;
+        }
+        return total;
+    });
+
+    valueMethod( "multiply", function( stat ){
+        var children = stat.getChildren();
+        for( var i = 0, product = 1; i < children.length; i++ ){
+            product = product * children[i].value;
+        }
+        return product;
+    });
 
     //***************************************************************************//
     // Items
-    yore.Sheet.prototype.makeItem = function(){
+    yore.Sheet.prototype.makeItem = function makeItem(){
         return {
             name : "",
             quantity : 1,
@@ -373,16 +370,6 @@
         }
         return result;
     };
-
-    function Map( array, keyName ){
-        var map = {};
-        for( var i = 0; i < array.length; i++ ){
-            var element = array[i];
-            var key = element[ keyName ];
-            map[ key ] = element;
-        }
-        return map;
-    }
 
     window.yore = yore;
 })();

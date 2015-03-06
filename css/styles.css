@@ -122,11 +122,12 @@ input.die{
     height:  1.3em;
 }
 
-.caption {
+.yore-caption {
     font-size: x-small;
     font-weight: lighter;
     text-align: center;
     display: block;
+    margin-bottom: 0;
 }
 
 .slot-text {
@@ -214,4 +215,9 @@ input.die{
 .negative{
     font-weight: bold;
     color: #420;
+}
+
+.button-remove{
+    background-color: red;
+    float: right;
 }

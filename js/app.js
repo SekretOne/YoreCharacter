@@ -104,7 +104,7 @@
                  total += items[i].quantity * items[i].weight;
              }
             return total;
-        }
+        };
     }]);
     /**
      * Will probably be turned into the main sheet
@@ -211,12 +211,6 @@
     app.filter( "modifier", function(){
         return function( value ){
             return value >= 0 ? "+"+ value : value;
-        }
-    });
-
-    app.filter( "typeClear", function(){
-        return function( type ){
-            return type === "untyped" ? "" : type;
         }
     });
 

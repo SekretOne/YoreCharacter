@@ -23,23 +23,23 @@
         </div>
 
         <div class="single-stat rising-container">
-            <span class="caption">NL</span>
+            <label class="yore-caption">NL</label>
             <div>
                 <input class="slot-large" ng-model="front.nl.value"/>
             </div>
         </div>
 
         <div class="single-stat rising-container">
-            <span class="caption">wounds</span>
+            <label class="yore-caption">wounds</label>
             <div>
                 <input class="slot-large" ng-model="front.wounds.value" ng-change="front.currentHp = front.hp.value - front.wounds.value" ng-blur="front.wounds.update()"/>
             </div>
         </div>
 
         <div class="single-stat rising-container">
-            <span class="caption">current</span>
+            <label class="yore-caption">current</label>
             <div>
-                <label class="slot-large {{front.health()}}" >{{front.hp.value - front.wounds.value}}</label>
+                <b class="slot-large {{front.health()}}" >{{front.hp.value - front.wounds.value}}</b>
             </div>
         </div>
 

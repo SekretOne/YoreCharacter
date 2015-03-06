@@ -1,6 +1,6 @@
 <div class="rising-container">
     <div class="stat single-stat">
-        <span class="caption">{{statCtrl.displayName}}</span>
+        <label class="yore-caption">{{statCtrl.displayName}}</label>
         <div ng-click="statCtrl.collapsed = !statCtrl.collapsed" class="slot-large">
             <span ng-if="dc">{{stat.value}}</span>
             <span ng-if="!dc">{{stat.value | modifier}}</span>
@@ -11,7 +11,7 @@
             <span class="slot-large sub-stat" ng-click="statCtrl.openDetail( child )">{{child.value | modifier }}</span>
             <div class="sub-stat-description">
                 <span>{{child.name}}</span>
-                <span>{{child.type | typeClear}}</span>
+                <span>{{child.type}}</span>
             </div>
         </div>
         <div>
