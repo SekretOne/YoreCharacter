@@ -5,13 +5,40 @@
 (function(){
     var app = angular.module( "yoreApp", [ 'ngRoute', 'ui.bootstrap'] );
 
-    /*app.run(function($rootScope, $templateCache) {
-        $rootScope.$on('$viewContentLoaded', function() {
-            $templateCache.removeAll();
-        });
-    });*/
+    app.run(function($rootScope, $templateCache ) {
+        $templateCache.removeAll();
+    });
 
-    loadFromStorage();
+    /**
+     *  Yore manipulation service.
+     */
+    app.factory( "ngYore", function(){
+        var ngYore = {
+            load : function load(){
+                //localStorage.removeItem( "sheets");
+                var data = localStorage.getItem( "sheets" );
+                if( data !== null ){
+                    data = angular.fromJson( data );
+                    var sheetMap = {};
+                    for( var id in data ){
+                        sheetMap[ id ] = new yore.Sheet( data[ id ] );
+                    }
+                    yore.setSheets( sheetMap );
+                }
+            },
+            saveAll : function saveAll(){
+                localStorage.setItem( "sheets", angular.toJson(
+                    yore.getSheets()
+                ) );
+            },
+            save : function( name, sheet ){
+                localStorage.setItem( "sheets." + name , angular.toJson(
+                    sheet
+                ) );
+            }
+        };
+        return ngYore;
+    });
 
     app.config(  ['$routeProvider', '$locationProvider', function($routeProvider, $locationProvider){
         $routeProvider.when( "/",
@@ -45,19 +72,20 @@
     }]);
 
 
-    app.controller( "MainCtrl", ['$route', '$routeParams', '$location',
-        function($route, $routeParams, $location){
+    app.controller( "MainCtrl", ['$route', '$routeParams', '$location', 'ngYore',
+        function($route, $routeParams, $location, ngYore){
 
             this.$route = $route;
             this.$location = $location;
             this.$routeParams = $routeParams;
+            ngYore.load();
     }]);
 
     /**
      * Select characters
      */
-    app.controller( "CharacterGalleryCtrl", ['$route', '$routeParams', '$location', function($route, $routeParams, $location) {
-        save();
+    app.controller( "CharacterGalleryCtrl", ['$route', '$routeParams', '$location', 'ngYore', function($route, $routeParams, $location, ngYore) {
+        ngYore.saveAll();
         this.characters = yore.getSheets();
         this.makeCharacter = function(){
             var character= yore.makeCharacter();
@@ -70,8 +98,8 @@
     /**
      * Character's biography
      */
-    app.controller( "OverviewController", ['$routeParams', function($routeParams){
-        save();
+    app.controller( "OverviewController", ['$routeParams', 'ngYore', function($routeParams, ngYore){
+        ngYore.saveAll();
         this.charId = $routeParams.charId;
         var sheet = yore.getSheet( this.charId );
         this.xp = sheet.experience;
@@ -86,8 +114,8 @@
     /**
      * Inventory
      */
-    app.controller( "InventoryController", ['$scope', '$routeParams', function($scope, $routeParams) {
-        save();
+    app.controller( "InventoryController", ['$scope', '$routeParams', 'ngYore', function($scope, $routeParams, ngYore) {
+        ngYore.saveAll();
         this.charId = $routeParams.charId;
         var sheet =  yore.getSheet( this.charId );
         this.items = sheet.items;
@@ -109,8 +137,8 @@
     /**
      * Will probably be turned into the main sheet
      */
-    app.controller( "StatListController", ['$routeParams', function($routeParams) {
-        save();
+    app.controller( "StatListController", ['$routeParams', 'ngYore', function ($routeParams, ngYore) {
+        ngYore.saveAll();
         this.charId = $routeParams.charId;
         var sheet =  yore.getSheet( this.charId );
 
@@ -159,7 +187,7 @@
             if( die.value == 0 || die.value == NaN ){
                 die.removeSelf();
             }
-            save();
+            ngYore.saveAll();
         };
 
         this.addDie = function( value ){
@@ -215,22 +243,4 @@
     });
 
     //=================================================================================================================//
-    function loadFromStorage(  ){
-        //load from local storage
-        //localStorage.removeItem( "sheets");
-        var data = localStorage.getItem( "sheets" );
-        if( data !== null ){
-            data = angular.fromJson( data );
-            var sheetMap = {};
-            for( var sheetId in data ){
-                sheetMap[ sheetId ] = new yore.Sheet( data[sheetId] );
-            }
-            yore.setSheets( sheetMap );
-        }
-    }
-
-    function save(  ){
-        var sheets = yore.getSheets();
-        localStorage.setItem( "sheets", angular.toJson( sheets ) );
-    }
 })();
