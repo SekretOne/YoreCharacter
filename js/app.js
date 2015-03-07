@@ -5,7 +5,7 @@
 (function(){
     var app = angular.module( "yoreApp", [ 'ngRoute', 'ui.bootstrap'] );
 
-    app.run(function($rootScope, $templateCache ) {
+    /*app.run(function($rootScope, $templateCache ) {
         $templateCache.removeAll();
     });
 
@@ -84,7 +84,7 @@
     /**
      * Select characters
      */
-    app.controller( "CharacterGalleryCtrl", ['$route', '$routeParams', '$location', 'ngYore', function($route, $routeParams, $location, ngYore) {
+    app.controller( "CharacterGalleryCtrl", [ '$routeParams', '$location', 'ngYore', function( $routeParams, $location, ngYore) {
         ngYore.saveAll();
         this.characters = yore.getSheets();
         this.makeCharacter = function(){

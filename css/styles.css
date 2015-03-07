@@ -37,11 +37,7 @@ input.die{
     -moz-appearance:textfield;
 }
 
-.section-abilities {
-    display: inline-block;
-}
-
-.section-abilities .ability{
+.ability{
     display: inline-block;
     border: gray 1px solid;
     border-radius: 4px;
@@ -62,12 +58,7 @@ input.die{
     text-indent: 1px;
 }
 
-.rising-container{
-    display: inline-block;
-    vertical-align: top;
-}
-
-.rising-container input{
+.stat-container input{
     padding: 0;
 }
 
@@ -75,11 +66,17 @@ input.die{
     margin-bottom: 4px;
 }
 
-.single-stat{
+.stat, .stat-content{
     display: inline-block;
+    vertical-align: top;
 }
 
-.slot-large{
+.addend{
+    display: block;
+    margin-top: 2px;
+}
+
+.stat-value, .addend-value{
     padding: 0;
     display: inline-block;
     border: gray 1px solid;
@@ -89,25 +86,26 @@ input.die{
     font-size: large;
 }
 
-.sub-stat{
+.addend-value{
     font-size: small;
 }
 
-.sub-stat-description{
+.addend-details, .addend label{
     display: inline-block;
+    vertical-align: top;
 }
 
-.sub-stat-description span{
+.addend-details span{
     color: gray;
     display: block;
     text-align: center;
 }
 
-.slot-large:hover{
+.stat-value:hover, .addend-value:hover{
     background-color: lightcyan;
 }
 
-.slot-large:active{
+.stat-value:active .addend-value:active{
     border: inset 1px;
     background-color: lightblue;
     text-indent: 1px;
@@ -122,7 +120,7 @@ input.die{
     height:  1.3em;
 }
 
-.yore-caption {
+.stat-title {
     font-size: x-small;
     font-weight: lighter;
     text-align: center;

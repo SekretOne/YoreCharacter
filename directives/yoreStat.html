@@ -1,21 +1,19 @@
-<div class="rising-container">
-    <div class="stat single-stat">
-        <label class="yore-caption">{{statCtrl.displayName}}</label>
-        <div ng-click="statCtrl.collapsed = !statCtrl.collapsed" class="slot-large">
+<div class="stat">
+    <div class="stat-content">
+        <label class="stat-title">{{statCtrl.displayName}}</label>
+        <div ng-click="statCtrl.collapsed = !statCtrl.collapsed" class="stat-value">
             <span ng-if="dc">{{stat.value}}</span>
             <span ng-if="!dc">{{stat.value | modifier}}</span>
         </div>
     </div>
     <div collapse="statCtrl.collapsed">
-        <div class="stat" ng-repeat="child in stat.getChildren()">
-            <span class="slot-large sub-stat" ng-click="statCtrl.openDetail( child )">{{child.value | modifier }}</span>
-            <div class="sub-stat-description">
+        <div class="addend" ng-repeat="child in stat.getChildren()">
+            <label class="stat-value" ng-click="statCtrl.openDetail( child )">{{child.value | modifier }}</label>
+            <div class="addend-details">
                 <span>{{child.name}}</span>
                 <span>{{child.type}}</span>
             </div>
         </div>
-        <div>
-            <label class="slot-large sub-stat">new</label>
-        </div>
+        <button class="addend addend-value">new</button>
     </div>
 </div>

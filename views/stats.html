@@ -5,11 +5,11 @@
     <a href="char/{{front.charId}}/inventory">Inventory</a>
     <div>
         <h4>Abilities</h4>
-        <div class="section-abilities">
-            <div ng-repeat="ability in front.abilities" class="ability-element">
+        <div>
+            <div ng-repeat="ability in front.abilities">
                 <span class="ability">{{ability.score.name}}</span>
-                <span class="slot-large">{{ability.mod.value | modifier}}</span>
-                <span class="slot-large">{{ability.score.value}}</span>
+                <span class="stat-value">{{ability.mod.value | modifier}}</span>
+                <span class="stat-value">{{ability.score.value}}</span>
             </div>
         </div>
     </div>
@@ -22,24 +22,24 @@
             <button ng-click="front.addDie( front.newDie )">+</button>
         </div>
 
-        <div class="single-stat rising-container">
-            <label class="yore-caption">NL</label>
+        <div class="stat">
+            <label class="stat-title">NL</label>
             <div>
-                <input class="slot-large" ng-model="front.nl.value"/>
+                <input class="stat-value" ng-model="front.nl.value"/>
             </div>
         </div>
 
-        <div class="single-stat rising-container">
-            <label class="yore-caption">wounds</label>
+        <div class="stat">
+            <label class="stat-title">wounds</label>
             <div>
-                <input class="slot-large" ng-model="front.wounds.value" ng-change="front.currentHp = front.hp.value - front.wounds.value" ng-blur="front.wounds.update()"/>
+                <input class="stat-value" ng-model="front.wounds.value" ng-change="front.currentHp = front.hp.value - front.wounds.value" ng-blur="front.wounds.update()"/>
             </div>
         </div>
 
-        <div class="single-stat rising-container">
-            <label class="yore-caption">current</label>
+        <div class="stat">
+            <label class="stat-title">current</label>
             <div>
-                <b class="slot-large {{front.health()}}" >{{front.hp.value - front.wounds.value}}</b>
+                <b class="stat-value {{front.health()}}" >{{front.hp.value - front.wounds.value}}</b>
             </div>
         </div>
 

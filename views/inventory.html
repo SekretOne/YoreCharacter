@@ -12,11 +12,11 @@
     </div>
     <div ng-repeat="item in inventory.items">
         <div class="item">
+            <button ng-click="item.shown = item.shown ? false : true">{{item.shown?"-":"+"}}</button>
             <span class="item-weight">{{item.quantity * item.weight}}</span>
             <input ng-model="item.name" class="item-name"/>
             <input ng-model="item.quantity" class="item-quantity"/>
             <input ng-model="item.weight" class="item-weight"/>
-            <button ng-click="item.shown = item.shown ? false : true">{{item.shown?"-":"+"}}</button>
             <div collapse="!item.shown">
                 <textarea ng-model="item.description"></textarea>
             </div>
